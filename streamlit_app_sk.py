@@ -89,11 +89,11 @@ def calculate_significance(
 
 
 placeholder = st.empty()
-placeholder.title("A/B Test Comparison")
+placeholder.title("Apple watch data XML")
 
 with st.sidebar:
 
-    uploaded_file = st.file_uploader("Upload CSV", type=".csv")
+    uploaded_file = st.file_uploader("Upload XML", type=".xml")
 
     if uploaded_file:
         df = pd.read_csv(uploaded_file)
@@ -101,7 +101,7 @@ with st.sidebar:
         st.markdown("#### Data preview")
         st.dataframe(df.head())
 
-        ab = st.multiselect("A/B column", options=df.columns)
+        ab = st.multiselect("Watch column", options=df.columns)
         if ab:
             control = df[ab[0]].unique()[0]
             treatment = df[ab[0]].unique()[1]
