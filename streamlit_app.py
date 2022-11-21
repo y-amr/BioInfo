@@ -7,6 +7,9 @@ from scipy.stats import norm
 import altair as alt
 import xml.etree.ElementTree
 import datetime
+import re
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 st.set_page_config(
     page_title="Apple Watch Data APP", page_icon="⌚️", initial_sidebar_state="expanded"
@@ -264,6 +267,27 @@ def calculate_significance(
         st.session_state.alpha, st.session_state.p
     )
 
+
+def get_bpm(healthdata):
+    pattern = '^.*IdentifierHeartRate".*startDate="(.{19}).*value="([0-9]*).*$'
+    with open(healthdata, 'r') as f:
+        for line in f:
+            search = re.search(pattern, line)
+            if search is not None:
+                df = df.append({
+                    'date': search.group(1),
+                    'bpm': search.group(2)
+                }, ignore_index=True)
+
+    df.date = pd.to_datetime(df.date)
+    df.bpm = pd.to_numeric(df.bpm)
+    df = df.set_index('date')
+    df = df.sort_index()
+    df.head()
+    plt.figure(figsize=(20, 8))
+    sns.lineplot(x=df.index, y=df.bpm)
+    plt.show()
+
 def iter_records(healthdata):
     healthdata_attr = healthdata.attrib
     for rec in healthdata.iterfind('.//Record'):
@@ -308,6 +332,8 @@ if uploaded_file:
     print(df)
 
     st.markdown("### Select columns for analysis")
+
+
     """
     with st.form(key="my_form"):
         ab = st.multiselect(
