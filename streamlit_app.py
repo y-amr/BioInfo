@@ -275,8 +275,7 @@ def iter_records(healthdata):
             else:
                 rec_dict[k] = v
         yield rec_dict
-    
-    
+
 st.write(
     """
 # ⌚️ Watch Data App
@@ -302,7 +301,9 @@ if use_example_file:
 
 
 if uploaded_file:
-    df = xml.etree.ElementTree.parse().getroot()
+
+    df = xml.etree.ElementTree.parse(uploaded_file).getroot()
+
     st.markdown("### Data preview")
     st.dataframe(list(iter_records(df)))
 
