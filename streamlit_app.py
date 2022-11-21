@@ -329,7 +329,10 @@ if uploaded_file:
     df = xml.etree.ElementTree.parse(uploaded_file).getroot()
     st.markdown("### Data preview")
     df = st.dataframe(list(iter_records(df)))
+
     print(df)
+
+    df = st.dataframe(list(get_bpm(df)))
 
     st.markdown("### Select columns for analysis")
 
