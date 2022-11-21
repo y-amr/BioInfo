@@ -6,7 +6,7 @@ from scipy.stats import norm
 import altair as alt
 
 st.set_page_config(
-    page_title="A/B Test Comparison", page_icon="📈", initial_sidebar_state="expanded"
+    page_title="Apple Watch Data ", page_icon="⌚️", initial_sidebar_state="expanded"
 )
 
 
