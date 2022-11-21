@@ -268,26 +268,8 @@ def calculate_significance(
     )
 
 
-def get_bpm(healthdata):
-    pattern = '^.*IdentifierHeartRate".*startDate="(.{19}).*value="([0-9]*).*$'
-    healthdata_attr = healthdata.attrib
 
-    for line in healthdata.iterfind('.//Record'):
-        search = re.search(pattern, line)
-        if search is not None:
-            df = df.append({
-                'date': search.group(1),
-                'bpm': search.group(2)
-            }, ignore_index=True)
 
-    df.date = pd.to_datetime(df.date)
-    df.bpm = pd.to_numeric(df.bpm)
-    df = df.set_index('date')
-    df = df.sort_index()
-    df.head()
-    plt.figure(figsize=(20, 8))
-    sns.lineplot(x=df.index, y=df.bpm)
-    plt.show()
 
 def iter_records(healthdata):
     healthdata_attr = healthdata.attrib
@@ -330,13 +312,22 @@ if uploaded_file:
     df = xml.etree.ElementTree.parse(uploaded_file).getroot()
     st.markdown("### Data preview")
     df = st.dataframe(list(iter_records(df)))
+    st.markdown("### Nombre de pas par mois")
+    x = []
+    y = []
+    for i in range(0, len(df["type"])):
+        if df["type"][i] == 'HKQuantityTypeIdentifierStepCount':
+            x.append(int(df["value"][i]))
+            y.append(df['startDate'][i].strftime("%Y-%m"))
+    value_date = pd.DataFrame({'value': x, 'date': y}, columns=['value', 'date'])
 
-    print(df)
+    fig = plt.gcf()
+    fig.set_size_inches(30, 30)
 
-    df = st.dataframe(list(get_bpm(df)))
-
-    st.markdown("### Select columns for analysis")
-
+    plt.plot(np.unique(value_date['date']), value_date.groupby(by="date").sum(), '-')
+    plt.title('Step over time')
+    plt.xlabel('Date')
+    plt.ylabel('number of steps')
 
     """
     with st.form(key="my_form"):
