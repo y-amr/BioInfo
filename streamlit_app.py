@@ -270,14 +270,15 @@ def calculate_significance(
 
 def get_bpm(healthdata):
     pattern = '^.*IdentifierHeartRate".*startDate="(.{19}).*value="([0-9]*).*$'
-    with open(healthdata, 'r') as f:
-        for line in f:
-            search = re.search(pattern, line)
-            if search is not None:
-                df = df.append({
-                    'date': search.group(1),
-                    'bpm': search.group(2)
-                }, ignore_index=True)
+    healthdata_attr = healthdata.attrib
+
+    for line in healthdata.iterfind('.//Record'):
+        search = re.search(pattern, line)
+        if search is not None:
+            df = df.append({
+                'date': search.group(1),
+                'bpm': search.group(2)
+            }, ignore_index=True)
 
     df.date = pd.to_datetime(df.date)
     df.bpm = pd.to_numeric(df.bpm)
