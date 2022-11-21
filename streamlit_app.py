@@ -5,6 +5,8 @@ import numpy as np
 import scipy.stats
 from scipy.stats import norm
 import altair as alt
+import xml.etree.ElementTree
+import datetime
 
 st.set_page_config(
     page_title="Apple Watch Data APP", page_icon="⌚️", initial_sidebar_state="expanded"
