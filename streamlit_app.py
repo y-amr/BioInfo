@@ -303,11 +303,12 @@ if use_example_file:
 if uploaded_file:
 
     df = xml.etree.ElementTree.parse(uploaded_file).getroot()
-
     st.markdown("### Data preview")
-    st.dataframe(list(iter_records(df)))
+    df = st.dataframe(list(iter_records(df)))
+    print(df)
 
     st.markdown("### Select columns for analysis")
+    """
     with st.form(key="my_form"):
         ab = st.multiselect(
             "A/B column",
@@ -363,11 +364,11 @@ if uploaded_file:
             )
 
         submit_button = st.form_submit_button(label="Submit")
-
+    
     if not ab or not result:
         st.warning("Please select both an **A/B column** and a **Result column**.")
         st.stop()
-
+    
     # type(uploaded_file) == str, means the example file was used
     name = (
         "Website_Results.csv" if isinstance(uploaded_file, str) else uploaded_file.name
@@ -443,3 +444,4 @@ if uploaded_file:
         .applymap(style_negative, props="color:red;")
         .apply(style_p_value, props="color:red;", axis=1, subset=["p-value"])
     )
+    """
