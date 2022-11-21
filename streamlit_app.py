@@ -262,7 +262,19 @@ def calculate_significance(
         st.session_state.alpha, st.session_state.p
     )
 
-
+def iter_records(healthdata):
+    healthdata_attr = healthdata.attrib
+    for rec in healthdata.iterfind('.//Record'):
+        rec_dict = healthdata_attr.copy()
+        rec_dict.update(healthdata.attrib)
+        for k, v in rec.attrib.items():
+            if 'date' in k.lower():
+                rec_dict[k] = datetime.datetime.strptime(v, '%Y-%m-%d %H:%M:%S %z')
+            else:
+                rec_dict[k] = v
+        yield rec_dict
+    
+    
 st.write(
     """
 # ⌚️ Watch Data App
@@ -288,10 +300,9 @@ if use_example_file:
 
 
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-
+    df = xml.etree.ElementTree.parse().getroot()
     st.markdown("### Data preview")
-    st.dataframe(df.head())
+    st.dataframe(list(iter_records(df)))
 
     st.markdown("### Select columns for analysis")
     with st.form(key="my_form"):
